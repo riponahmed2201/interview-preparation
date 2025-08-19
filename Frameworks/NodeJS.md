@@ -72,6 +72,39 @@ This section provides the **basic Node.js interview questions** which will prima
 49. [What are the different types of HTTP requests?](#49-what-are-the-different-types-of-http-requests)
 50. [How would you connect a MongoDB database to Node.js?](#50-how-would-you-connect-a-mongodb-database-to-nodejs)
 51. [What is the purpose of NODE_ENV?](#51-what-is-the-purpose-of-node_env)
+52. [List the various Node.js timing features](#52-list-the-various-nodejs-timing-features)
+53. [What is WASI, and why is it being introduced?](#53-what-is-wasi-and-why-is-it-being-introduced)
+54. [What is a first-class function in JavaScript?](#54-what-is-a-first-class-function-in-javascript)
+55. [How do you manage packages in your Node.js project?](#55-how-do-you-manage-packages-in-your-nodejs-project)
+56. [How is Node.js better than other frameworks?](#56-how-is-nodejs-better-than-other-frameworks)
+57. [What is a fork in Node.js?](#57-what-is-a-fork-in-node-js)
+58. [List down the two arguments that async.queue takes as input?](#58-list-down-the-two-arguments-that-async-queue-takes-as-input)
+59. [What is the purpose of module.exports?](#59-what-is-the-purpose-of-module-exports)
+60. [What tools can be used to assure consistent code style?](#60-what-tools-can-be-used-to-assure-consistent-code-style)
+61. [What is the difference between JavaScript and Node.js?](#61-what-is-the-difference-between-javascript-and-nodejs)
+62. [What is the difference between asynchronous and synchronous functions?](#62-what-is-the-difference-between-asynchronous-and-synchronous-functions)
+63. [What are the asynchronous tasks that should occur in an event loop?](#63-what-are-the-asynchronous-tasks-that-should-occur-in-an-event-loop)
+64. [What is the order of execution in control flow statements?](#64-what-is-the-order-of-execution-in-control-flow-statements)
+65. [Are there any disadvantages to using Node.js?](#66-are-there-any-disadvantages-to-using-nodejs)
+66. [What is the primary reason for using the event-based model in Node.js?](#67-what-is-the-primary-reason-for-using-the-event-based-model-in-nodejs)
+67. [What is the difference between Node.js and Ajax?](#68-what-is-the-difference-between-nodejs-and-ajax)
+68. [What is the advantage of using Node.js?](#69-what-is-the-advantage-of-using-nodejs)
+69. [Does Node run on Windows?](#70-does-node-run-on-windows)
+70. [Can you access DOM in Node?](#71-can-you-access-dom-in-node)
+71. [Why is Node.js quickly gaining attention from Java programmers?](#72-why-is-nodejs-quickly-gaining-attention-from-java-programmers)
+72. [What are the challenges with Node.js?](#73-what-are-the-challenges-with-nodejs)
+73. [What is "non-blocking" in Node.js?](#74-what-is-non-blocking-in-nodejs)
+74. [How does Node.js overcome the problem of blocking I/O operations?](#75-how-does-nodejs-overcome-the-problem-of-blocking-io-operations)
+75. [How can we use async/await in Node.js?](#76-how-can-we-use-asyncawait-in-nodejs)
+76. [How can we use async/await in Node.js?](#76-how-can-we-use-asyncawait-in-nodejs)
+77. [Why should you separate the Express app and server?](#77-why-should-you-separate-the-express-app-and-server)
+78. [Explain the concept of stub in Node.js](#78-explain-the-concept-of-stub-in-nodejs)
+79. [What is the framework that is used majorly in Node.js today?](#79-what-is-the-framework-that-is-used-majorly-in-nodejs-today)
+80. [What are the security implementations that are present in Node.js?](#80-what-are-the-security-implementations-that-are-present-in-nodejs)
+81. [What is Libuv?](#81-what-is-libuv)
+82. [What are global objects in Node.js?](#82-what-are-global-objects-in-nodejs)
+83. [Why is assert used in Node.js?](#83-why-is-assert-used-in-nodejs)
+84. [Why is ExpressJS used?](#84-why-is-expressjs-used)
 
 ---
 
@@ -1020,3 +1053,857 @@ if (process.env.NODE_ENV === "development") {
   console.log("Running in production mode");
 }
 ```
+
+## 52. List the various Node.js timing features
+
+Node.js provides several **timing-related functions** to schedule code execution and control delays. These features are part of the **Timers module**.
+
+**Common Node.js timing features:**
+
+| Feature              | Description                                                                                           |
+| -------------------- | ----------------------------------------------------------------------------------------------------- |
+| `setTimeout()`       | Executes a function **once after a specified delay** (in milliseconds).                               |
+| `clearTimeout()`     | Cancels a timeout previously established by `setTimeout()`.                                           |
+| `setInterval()`      | Repeatedly executes a function at **specified intervals** (in milliseconds).                          |
+| `clearInterval()`    | Cancels an interval previously established by `setInterval()`.                                        |
+| `setImmediate()`     | Executes a function **immediately after the current event loop cycle**.                               |
+| `clearImmediate()`   | Cancels an immediate execution previously scheduled by `setImmediate()`.                              |
+| `process.nextTick()` | Schedules a callback to **run at the end of the current operation**, before the event loop continues. |
+
+**Key Points:**
+
+- Timing functions are essential for **asynchronous programming** in Node.js.
+- `setTimeout()` and `setInterval()` are **global functions**, no need to require any module.
+- `setImmediate()` and `process.nextTick()` help **control the order of asynchronous callbacks** in the event loop.
+
+**Example:**
+
+```javascript
+setTimeout(() => console.log("Executed after 2 seconds"), 2000);
+setImmediate(() => console.log("Executed immediately after I/O events"));
+process.nextTick(() => console.log("Executed at the end of current operation"));
+```
+
+## 53. What is WASI, and why is it being introduced?
+
+**WASI** (WebAssembly System Interface) is a **system interface for WebAssembly** that allows running WebAssembly applications outside the browser in a **secure and sandboxed environment**.
+
+**Key Concepts:**
+
+- Each WASI instance represents a **unique sandbox environment**.
+- A WASI instance must specify:
+  - **Command-line parameters**
+  - **Environment variables**
+  - **Sandbox directory structure** for security.
+- Provides **API and helper methods** for interacting with WASI-based applications.
+
+**Why WASI is being introduced:**
+
+- To allow WebAssembly applications to **run safely on servers, desktops, or embedded devices**.
+- Provides **standardized system calls** for file I/O, clocks, and other OS-level interactions.
+- Enhances **portability, security, and modularity** of WebAssembly programs.
+
+**Example Use Case:**
+
+```javascript
+const { WASI } = require("wasi");
+const wasi = new WASI({
+  args: process.argv,
+  env: process.env,
+  preopens: { "/sandbox": "./sandbox" },
+});
+```
+
+**Key Points:**
+
+- WASI enables running WebAssembly modules outside browsers.
+- Ensures isolation and security for system-level interactions.
+- Useful for server-side, CLI, or embedded WebAssembly applications.
+
+## 54. What is a first-class function in JavaScript?
+
+A **first-class function** is a function that is treated as a **first-class citizen** in JavaScript. This means it can be:
+
+- **Assigned to variables**
+- **Passed as arguments** to other functions
+- **Returned from other functions**
+- **Stored in data structures** like arrays or objects
+
+**In Node.js:**
+
+- First-class functions are heavily used in **asynchronous programming**.
+- They enable **callbacks, promises, and higher-order functions**, allowing non-blocking and flexible code.
+
+**Example:**
+
+```javascript
+// Assigning function to a variable
+const greet = function (name) {
+  console.log(`Hello, ${name}`);
+};
+
+// Passing function as an argument
+function processUserInput(callback) {
+  const name = "Alice";
+  callback(name);
+}
+
+processUserInput(greet);
+
+// Returning a function from another function
+function multiplier(factor) {
+  return function (x) {
+    return x * factor;
+  };
+}
+
+const double = multiplier(2);
+console.log(double(5)); // Output: 10
+```
+
+**Key Points:**
+
+- First-class functions allow modular, reusable, and composable code.
+- Essential for event-driven and asynchronous programming in Node.js.
+
+## 55. How do you manage packages in your Node.js project?
+
+In Node.js, **packages** are managed using the **Node Package Manager (NPM)** or alternatives like **Yarn**. This allows you to **install, update, and manage dependencies** for your project.
+
+**Managing packages with NPM:**
+
+1. **Initialize a project**:
+
+```bash
+npm init
+# or npm init -y (to accept defaults)
+```
+
+2. **Install packages**:
+
+```bash
+npm install <package-name >      # Install locally and add to dependencies
+npm install -g <package-name >   # Install globally
+npm install <package-name > --save-dev  # Install as development dependency
+```
+
+3. **Uninstall packages**:
+
+```bash
+npm uninstall <package-name >
+```
+
+4. **Update packages**:
+
+```bash
+npm update <package-name >
+```
+
+5. **Check outdated packages**:
+
+```bash
+npm update <package-name >
+```
+
+6. **Package.json file**:
+
+- Lists all project dependencies and versions.
+- Allows reproducible builds across environments.
+
+**Key Points**:
+
+- NPM helps manage third-party libraries efficiently.
+- Provides a registry for publishing your own packages.
+- Essential for project modularity and dependency management in Node.js.
+
+## 56. How is Node.js better than other frameworks?
+
+**Node.js** is a **server-side JavaScript runtime** built on the **V8 engine** (used by Google Chrome). It offers several advantages over other frameworks:
+
+**Key Advantages:**
+
+1. **High Performance**
+
+   - V8 engine compiles JavaScript to machine code, making Node.js **very fast**.
+   - Handles **concurrent requests efficiently** using the **event-driven, non-blocking I/O model**.
+
+2. **Scalability**
+
+   - Built for **real-time, high-traffic applications**.
+   - Supports **horizontal scaling** across multiple servers.
+
+3. **Full-Stack JavaScript**
+
+   - Developers can use **JavaScript for both frontend and backend**, simplifying the development process.
+
+4. **Large Ecosystem**
+
+   - Access to **NPM registry** with thousands of open-source packages and libraries.
+
+5. **Community Support**
+
+   - Strong **community and corporate backing** for updates, tools, and best practices.
+
+6. **Asynchronous & Non-Blocking**
+   - Ideal for **I/O-heavy applications**, like chat apps, APIs, and streaming services.
+
+**Summary:**  
+Node.js provides **speed, scalability, and efficiency** while allowing developers to **use JavaScript across the entire stack**, which many traditional frameworks do not support.
+
+## 57. What is a fork in Node.js?
+
+In Node.js, **`fork()`** is a method used to create a **new child process** that runs a **separate Node.js instance**.
+
+**Key Points:**
+
+- Allows running **CPU-intensive tasks** without blocking the main event loop.
+- Useful for **creating clusters** of Node.js servers to improve performance.
+- The parent and child processes can communicate via **inter-process messaging** using `send()` and `on('message')`.
+
+**Example:**
+
+```javascript
+const { fork } = require("child_process");
+
+const child = fork("child.js");
+
+child.on("message", (msg) => {
+  console.log("Message from child:", msg);
+});
+
+child.send({ hello: "world" });
+```
+
+## 58. List down the two arguments that async.queue takes as input
+
+The `async.queue` function in Node.js is used to **create a task queue** that executes tasks in parallel with controlled concurrency.
+
+**Arguments:**
+
+1. **Worker function**
+
+   - A function that processes each task in the queue.
+   - Receives the task data and a callback to signal completion.
+
+2. **Concurrency limit (optional)**
+   - Specifies the **maximum number of tasks** to process in parallel.
+   - Defaults to `1` if not provided.
+
+**Example:**
+
+```javascript
+const async = require("async");
+
+const queue = async.queue(function (task, callback) {
+  console.log("Processing task:", task.name);
+  callback();
+}, 2); // concurrency = 2
+
+queue.push({ name: "Task 1" });
+queue.push({ name: "Task 2" });
+queue.push({ name: "Task 3" });
+```
+
+**Key Points:**
+
+- Controls parallel execution of asynchronous tasks.
+- Ensures efficient resource usage without overwhelming the system.
+- Useful for I/O-heavy or CPU-bound tasks in Node.js applications.
+
+## 59. What is the purpose of module.exports?
+
+In Node.js, **`module.exports`** is an object used to **export functions, objects, or values** from a module so that they can be accessed in other modules using `require()`.
+
+**Key Points:**
+
+- Determines what a module **exposes to other modules**.
+- By default, a module returns **an empty object** if nothing is exported.
+- Can export **single values, multiple functions, objects, or classes**.
+
+**Example 1: Exporting a function**
+
+```javascript
+// math.js
+function add(a, b) {
+  return a + b;
+}
+module.exports = add;
+
+// app.js
+const add = require("./math");
+console.log(add(2, 3)); // Output: 5
+```
+
+**Example 2: Exporting multiple values**
+
+```javascript
+// utils.js
+module.exports = {
+  greet: function (name) {
+    console.log(`Hello, ${name}`);
+  },
+  farewell: function (name) {
+    console.log(`Goodbye, ${name}`);
+  },
+};
+
+// app.js
+const utils = require("./utils");
+utils.greet("Alice"); // Output: Hello, Alice
+utils.farewell("Bob"); // Output: Goodbye, Bob
+```
+
+**Summary:**
+`module.exports` allows you to organize code into reusable modules and share functionality across your Node.js project.
+
+## 60. What tools can be used to assure consistent code style?
+
+Several tools can be used in Node.js to **ensure consistent code style and improve code quality**:
+
+| Tool         | Purpose                                                                                                            |
+| ------------ | ------------------------------------------------------------------------------------------------------------------ |
+| **ESLint**   | Linting tool that detects **syntax errors, code smells, and potential bugs**.                                      |
+| **Prettier** | Code formatter that enforces **consistent code formatting** across the project.                                    |
+| **Jest**     | Testing framework that ensures **code correctness** and helps maintain quality through unit and integration tests. |
+
+**Key Points:**
+
+- Using these tools together helps **maintain readability, consistency, and reliability**.
+- ESLint can be configured with **rules and plugins** specific to your project.
+- Prettier can automatically format code on **save or commit**.
+- Jest ensures that **changes do not break existing functionality**.
+
+## 61. What is the difference between JavaScript and Node.js?
+
+| Feature       | JavaScript                       | Node.js                                                  |
+| ------------- | -------------------------------- | -------------------------------------------------------- |
+| Type          | Programming language             | Runtime environment for executing JS outside the browser |
+| Execution     | Runs in web browsers             | Runs on server or local machine using V8 engine          |
+| Usage         | Frontend web development         | Backend/server-side development                          |
+| Built-in APIs | Browser-specific APIs (DOM, BOM) | Node.js-specific APIs (file system, network, etc.)       |
+| Compilation   | Interpreted by browser engines   | Compiled and executed by V8 engine                       |
+| Environment   | Browser environment              | Server-side environment                                  |
+
+**Summary:**
+
+- **JavaScript** is the language.
+- **Node.js** is a runtime that allows you to run JavaScript **outside the browser**, making server-side programming possible.
+
+## 62. What is the difference between asynchronous and synchronous functions?
+
+| Feature     | Synchronous Functions                    | Asynchronous Functions                         |
+| ----------- | ---------------------------------------- | ---------------------------------------------- |
+| Execution   | Blocks other code until completion       | Allows other code to run while waiting         |
+| Flow        | Executed **step by step**                | Executed **in parallel or deferred**           |
+| Use Case    | Simple, sequential tasks                 | I/O operations, API calls, database queries    |
+| Scalability | Can slow down applications               | Enables scalable and non-blocking applications |
+| Example     | Reading a file using `fs.readFileSync()` | Reading a file using `fs.readFile()`           |
+
+**Key Points:**
+
+- **Synchronous functions** block the main thread, making them unsuitable for high-concurrency tasks.
+- **Asynchronous functions** use callbacks, promises, or `async/await` to handle tasks without blocking.
+- Asynchronous behavior is **essential for scalable Node.js applications**, especially for I/O-heavy workloads.
+
+## 63. What are the asynchronous tasks that should occur in an event loop?
+
+In Node.js, the **event loop** handles asynchronous tasks to ensure **non-blocking execution**. Common asynchronous tasks include:
+
+| Task Type                  | Description                                                                |
+| -------------------------- | -------------------------------------------------------------------------- |
+| **I/O Operations**         | File system operations, network requests, database queries, etc.           |
+| **Timers**                 | Functions scheduled with `setTimeout()` or `setInterval()`.                |
+| **Callback Functions**     | Functions passed as callbacks to handle asynchronous events or operations. |
+| **Promises / Async-Await** | Tasks scheduled using promises that resolve asynchronously.                |
+
+**Key Points:**
+
+- Performing these tasks asynchronously allows Node.js to **handle many concurrent requests efficiently**.
+- The **event loop** ensures that the main thread is **never blocked**, even when executing I/O or timers.
+- Helps maintain **high performance and scalability** in server-side applications.
+
+## 64. What is the order of execution in control flow statements?
+
+In Node.js, the **order of execution** is determined by the **event loop** and the type of control flow statements used.
+
+**Execution Flow:**
+
+1. **Synchronous code** executes **first**, line by line.
+2. **Asynchronous callbacks** (from I/O, timers, promises) are placed in **queues** and executed later by the event loop.
+3. **Timers** (`setTimeout`, `setInterval`) are executed after the specified delay, in the **timers phase** of the event loop.
+4. **I/O callbacks** are executed in the **poll phase**.
+5. **`process.nextTick()` callbacks** are executed **before the next event loop tick**, giving them higher priority.
+6. **Promise callbacks** (microtasks) are executed **after the current operation but before I/O events**.
+
+**Summary Example:**
+
+```javascript
+console.log("Start");
+
+setTimeout(() => console.log("Timeout"), 0);
+Promise.resolve().then(() => console.log("Promise"));
+process.nextTick(() => console.log("Next Tick"));
+
+console.log("End");
+```
+
+**Output:**
+
+```javascript
+Start
+End
+Next Tick
+Promise
+Timeout
+```
+
+**Key Points:**
+
+- Node.js first executes synchronous code, then microtasks (nextTick, promises), followed by timers and I/O callbacks.
+- Understanding this order is crucial for writing predictable asynchronous code.
+
+## 66. Are there any disadvantages to using Node.js?
+
+While Node.js offers many benefits, it also has some **disadvantages**:
+
+| Disadvantage                                            | Explanation                                                                                                             |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Not suitable for CPU-intensive tasks**                | Node.js is single-threaded, so heavy computation can **block the event loop**, slowing down the application.            |
+| **High memory usage per connection**                    | Each connection consumes memory, and applications with **many simultaneous connections** can quickly exhaust resources. |
+| **Callback-heavy code** (without proper async handling) | Can lead to **callback hell**, making code harder to read and maintain.                                                 |
+| **Immature ecosystem for certain use cases**            | Some libraries may not be as stable or mature as those in other environments.                                           |
+
+**Key Points:**
+
+- Ideal for **I/O-heavy, real-time applications** rather than CPU-bound tasks.
+- Requires careful **memory and concurrency management** for high-load systems.
+- Proper use of **worker threads or child processes** can mitigate some CPU-bound limitations.
+
+## 67. What is the primary reason for using the event-based model in Node.js?
+
+The **primary reason** for using an **event-based model** in Node.js is **performance and scalability**.
+
+**Key Points:**
+
+- Node.js uses **non-blocking I/O operations**, allowing the server to handle **many connections concurrently**.
+- The **event loop** ensures that operations like network requests, file reads, and database queries **do not block the main thread**.
+- Enables **efficient resource usage**, making Node.js ideal for **real-time and high-concurrency applications**.
+
+**Example:**
+
+```javascript
+const http = require("http");
+
+const server = http.createServer((req, res) => {
+  res.end("Hello World");
+});
+
+server.listen(3000, () => {
+  console.log("Server listening on port 3000");
+});
+```
+
+- The server can handle multiple requests simultaneously without blocking, thanks to the event-driven architecture.
+
+## 68. What is the difference between Node.js and Ajax?
+
+| Feature           | Ajax                                                                                      | Node.js                                                                      |
+| ----------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Type              | Client-side technology                                                                    | Server-side runtime environment                                              |
+| Purpose           | Enables **asynchronous communication** between client and server without full page reload | Used for **building fast, scalable, and efficient server-side applications** |
+| Use Case          | Updating parts of a webpage dynamically                                                   | Real-time applications like chat, online games, streaming                    |
+| Execution         | Runs in the browser                                                                       | Runs on the server using the V8 JavaScript engine                            |
+| Programming Model | Works via **XMLHttpRequest or Fetch API**                                                 | Uses **event-driven, non-blocking I/O** model                                |
+
+**Summary:**
+
+- **Ajax** is mainly for **client-side async interactions**.
+- **Node.js** is for **server-side development**, handling requests and serving data efficiently.
+- They often work together: Node.js serves the backend, while Ajax requests data asynchronously from the frontend.
+
+## 69. What is the advantage of using Node.js?
+
+Node.js offers several **advantages** that make it popular for modern web development:
+
+| Advantage                  | Explanation                                                                                                                |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **High Performance**       | Built on the **V8 engine**, Node.js executes JavaScript very quickly.                                                      |
+| **Scalability**            | Uses **event-driven, non-blocking I/O**, allowing it to handle a **large number of simultaneous connections** efficiently. |
+| **Real-time Applications** | Ideal for **chat apps, online games, and streaming services** due to non-blocking architecture.                            |
+| **Easy to Learn & Use**    | JavaScript is already widely known, making it easier for developers to adopt Node.js.                                      |
+| **Full-Stack JavaScript**  | Developers can use **JavaScript on both frontend and backend**, simplifying development.                                   |
+| **Large Ecosystem**        | Access to **NPM packages** for almost any functionality.                                                                   |
+
+**Summary:**  
+Node.js is **fast, scalable, and well-suited for real-time, high-concurrency applications**, making it a top choice for modern backend development.
+
+## 70. Does Node run on Windows?
+
+**Yes**, Node.js runs on Windows as well as other major operating systems.
+
+**Key Points:**
+
+- Node.js is a **cross-platform runtime environment**.
+- Supported OS: **Windows, macOS, Linux**.
+- Installation on Windows can be done via the **official Node.js installer** from [nodejs.org](https://nodejs.org).
+- Once installed, Node.js can be used in **Command Prompt, PowerShell, or Windows Terminal**.
+
+**Example: Verify Node.js installation on Windows**
+
+```bash
+node -v
+npm -v
+```
+
+- These commands display the installed versions of Node.js and NPM.
+
+## 71. Can you access DOM in Node?
+
+**No**, you cannot access the DOM in Node.js.
+
+**Key Points:**
+
+- The **DOM (Document Object Model)** is a browser-specific API used to **manipulate HTML and XML documents**.
+- Node.js is a **server-side runtime**, so it **does not run in a browser**.
+- For DOM-like manipulation in Node.js, you can use **libraries such as `jsdom` or `cheerio`**, which simulate the DOM in a server environment.
+
+**Example using `jsdom`:**
+
+```javascript
+const { JSDOM } = require("jsdom");
+
+const dom = new JSDOM(`<body><p>Hello World</p></body>`);
+console.log(dom.window.document.querySelector("p").textContent); // Output: Hello World
+```
+
+- This allows DOM-like operations in Node.js without an actual browser.
+
+## 72. Why is Node.js quickly gaining attention from Java programmers?
+
+**Node.js** is attracting Java programmers for several reasons:
+
+**Key Points:**
+
+- **High Performance:** Built on the **V8 engine**, Node.js executes JavaScript very quickly compared to traditional Java-based servers.
+- **Scalability:** Its **event-driven, non-blocking I/O model** allows handling a large number of simultaneous connections efficiently.
+- **Resource Efficiency:** Node.js consumes fewer resources for I/O-heavy tasks compared to Java, which can be **memory and CPU intensive**.
+- **Real-time Applications:** Ideal for **chat apps, streaming, and online games** where low latency is critical.
+- **Unified Language:** Developers can use **JavaScript for both frontend and backend**, simplifying development.
+
+**Summary:**  
+Java programmers see Node.js as a **faster, lightweight alternative** for building scalable, real-time, and high-performance server-side applications.
+
+## 73. What are the challenges with Node.js?
+
+While Node.js is powerful, it has some **challenges**:
+
+| Challenge               | Explanation                                                                                                                                 |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Single-threaded**     | Node.js executes one task at a time, so **CPU-intensive tasks** can block the event loop and slow down the application.                     |
+| **Relative newness**    | Node.js is newer than technologies like Java or PHP, so **less mature ecosystem** and **fewer resources** are available for some use cases. |
+| **Memory limitations**  | Node.js is better suited for **lightweight, I/O-heavy applications**, and may not be ideal for **memory-intensive applications**.           |
+| **Callback-heavy code** | Improper handling of asynchronous code can lead to **callback hell**, making maintenance harder.                                            |
+| **Error handling**      | Asynchronous errors need careful management; unhandled errors can crash the application.                                                    |
+
+**Summary:**  
+Node.js is excellent for **I/O-heavy and real-time applications**, but requires careful **resource management** and proper **architecture** for CPU-bound or memory-heavy tasks.
+
+## 74. What is "non-blocking" in Node.js?
+
+In Node.js, **non-blocking** refers to the ability to **execute multiple tasks concurrently** without waiting for one task to finish before starting the next.
+
+**Key Points:**
+
+- Achieved through **asynchronous I/O operations**.
+- Allows Node.js to **handle multiple requests simultaneously**.
+- Prevents the **event loop from being blocked**, ensuring **high performance and scalability**.
+
+**Example:**
+
+```javascript
+const fs = require("fs");
+
+// Non-blocking read
+fs.readFile("file.txt", "utf8", (err, data) => {
+  if (err) throw err;
+  console.log(data);
+});
+
+console.log("This runs before the file is read");
+```
+
+**Output:**
+
+```javascript
+This runs before the file is read
+[Contents of file.txt]
+```
+
+- The log shows that Node.js does not wait for the file read to complete before moving on.
+
+## 75. How does Node.js overcome the problem of blocking I/O operations?
+
+Node.js addresses blocking I/O using an **event-driven, non-blocking I/O model**.
+
+**Key Points:**
+
+- **Asynchronous Callbacks:**
+
+  - I/O operations are performed **asynchronously** using callbacks, allowing the main thread to continue processing other tasks while waiting for I/O to complete.
+
+- **Single-threaded Event Loop:**
+
+  - Node.js uses a **single-threaded event loop** to manage all asynchronous operations efficiently.
+  - The event loop ensures that **multiple requests can be handled concurrently** without blocking the server.
+
+- **High Scalability:**
+  - Non-blocking I/O allows Node.js to handle **high volumes of simultaneous connections** efficiently.
+
+**Example:**
+
+```javascript
+const fs = require("fs");
+
+fs.readFile("file.txt", "utf8", (err, data) => {
+  if (err) throw err;
+  console.log("File content:", data);
+});
+
+console.log("Server continues processing other tasks...");
+```
+
+**Output:**
+
+```javascript
+Server continues processing other tasks...
+File content: [Contents of file.txt]
+```
+
+- Node.js continues executing other code while waiting for the file read operation, demonstrating non-blocking behavior.
+
+## 76. How can we use async/await in Node.js?
+
+**`async/await`** is a modern syntax in Node.js to handle asynchronous operations more **readably** than using callbacks or promises alone.
+
+**Key Points:**
+
+- **`async` keyword:** Marks a function as asynchronous and ensures it **returns a promise**.
+- **`await` keyword:** Pauses the execution of the function until the promise **resolves or rejects**.
+- Requires functions that **return promises**.
+
+**Example:**
+
+```javascript
+const fs = require("fs").promises;
+
+async function readFileAsync() {
+  try {
+    const data = await fs.readFile("file.txt", "utf8");
+    console.log("File content:", data);
+  } catch (err) {
+    console.error("Error reading file:", err);
+  }
+}
+
+readFileAsync();
+console.log("This runs before the file is read");
+```
+
+**Explanation:**
+
+- `readFileAsync()` is marked as async, allowing use of await.
+- `await fs.readFile()` pauses execution until the file is read.
+  -Meanwhile, the rest of the code (like the last console.log) continues executing, demonstrating non-blocking behavior.
+
+**Benefits:**
+
+- Cleaner and more readable code compared to nested callbacks.
+- Easier error handling using try/catch.
+
+## 77. Why should you separate the Express app and server?
+
+Separating the **Express application** and the **server** provides several benefits, including **testing, scalability, and flexibility**.
+
+**Key Points:**
+
+1. **Easier Testing**
+
+   - By separating the app from the server, you can **test app logic independently**.
+   - Makes it easier to **identify and fix bugs** without running the full server.
+   - Compatible with tools like **Supertest** for route testing.
+
+2. **Improved Scalability**
+
+   - Allows you to **run multiple instances** of the app on different servers.
+   - Helps **distribute load** and improves overall performance.
+
+3. **Flexibility to Change Server**
+   - Keeping app logic separate from server logic makes it easier to **switch to a different server** if necessary.
+   - Avoids major code changes while changing the server environment.
+
+**Example Structure:**
+
+```javascript
+// app.js
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+    res.send('Hello World');
+});
+
+module.exports = app;
+
+// server.js
+const app = require('./app');
+const PORT = 3000;
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+
+**Explanation:**
+
+- `app.js` contains all routes and middleware.
+- `server.js` handles listening on a port, separating environment concerns from app logic.
+```
+
+## 78. Explain the concept of stub in Node.js
+
+In Node.js, a **stub** is a function used as a **placeholder for a more complex function**, commonly in **unit testing**.
+
+**Key Points:**
+
+- Stubs **replace real functions** with simplified versions.
+- They **return predetermined values** to make tests **predictable and consistent**.
+- Useful for **isolating code** under test without relying on external dependencies (like databases or APIs).
+- Often used with testing frameworks like **Sinon.js**.
+
+**Example Using Sinon.js:**
+
+```javascript
+const sinon = require("sinon");
+
+// Original function
+function getUser(id) {
+  // Imagine this calls a database
+  return { id, name: "Alice" };
+}
+
+// Stub the function
+const stub = sinon.stub().returns({ id: 1, name: "Stub User" });
+
+console.log(stub()); // Output: { id: 1, name: 'Stub User' }
+```
+
+**Summary:**
+
+- Stubs help create controlled testing environments.
+- They allow testing specific parts of your code without invoking the real implementations.
+
+## 79. What is the framework that is used majorly in Node.js today?
+
+While several frameworks exist for Node.js, the **most popular frameworks today** are:
+
+| Framework      | Description                                                                                                                                   |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Express.js** | Minimalist, fast, and widely used framework for building **web applications and APIs**. Highly flexible with a large ecosystem of middleware. |
+| **Koa.js**     | Lightweight and modern framework developed by the Express team. Uses **async/await** by default for **cleaner asynchronous code**.            |
+
+**Key Points:**
+
+- **Express** is the most widely adopted due to **simplicity, middleware support, and community resources**.
+- **Koa** is preferred for projects needing **modern async handling and modular architecture**.
+- Other frameworks exist (Hapi, NestJS, Fastify), but **Express dominates most Node.js projects**.
+
+## 80. What are the security implementations that are present in Node.js?
+
+Node.js provides several **security mechanisms** to protect applications and data:
+
+| Security Feature              | Description                                                                                                                |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **Sandboxed Environment**     | Node.js can run code in a **restricted environment**, preventing malicious code from accessing sensitive system resources. |
+| **TLS/SSL Encryption**        | Supports **TLS/SSL** for encrypting data in transit, ensuring secure communication and preventing eavesdropping.           |
+| **Secure Package Management** | Using **npm audit** and vetted packages to avoid vulnerabilities from third-party modules.                                 |
+| **Environment Variables**     | Sensitive data like API keys and passwords can be stored in **environment variables** rather than hardcoded.               |
+| **Helmet and Middleware**     | Security middleware like **Helmet** can be used in Express apps to **set HTTP headers securely**.                          |
+
+**Summary:**
+
+- Node.js provides **runtime-level security** and **library-based measures** to help developers secure applications.
+- Proper implementation of these features is crucial for **preventing attacks and protecting data**.
+
+## 81. What is Libuv?
+
+**Libuv** is a core library used by Node.js to handle **asynchronous I/O operations efficiently**.
+
+**Key Points:**
+
+- Provides **cross-platform support** for asynchronous operations like **file system access, networking, and timers**.
+- Implements the **event loop** in Node.js, enabling **non-blocking I/O**.
+- Abstracts low-level OS operations, making Node.js **consistent across different operating systems**.
+- Written in **C** and used under the hood by Node.js to manage **concurrent operations** without blocking the main thread.
+
+**Summary:**  
+Libuv is essential for Node.js to provide **high-performance, event-driven, and non-blocking I/O capabilities**.
+
+## 82. What are global objects in Node.js?
+
+**Global objects** in Node.js are **available in all modules** without needing to explicitly import or require them.
+
+**Key Points:**
+
+- Accessible anywhere in your Node.js application.
+- Commonly used global objects include:
+
+| Object           | Description                                                                                                           |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **`process`**    | Provides information and control over the current Node.js process (e.g., environment variables, exiting the process). |
+| **`console`**    | Used for logging and debugging (e.g., `console.log()`, `console.error()`).                                            |
+| **`Buffer`**     | Handles binary data in Node.js (e.g., reading files, network streams).                                                |
+| **`__dirname`**  | Represents the directory name of the current module.                                                                  |
+| **`__filename`** | Represents the full file path of the current module.                                                                  |
+
+**Summary:**  
+Global objects simplify Node.js development by providing **built-in tools and access** without the need to import modules.
+
+## 83. Why is assert used in Node.js?
+
+The **`assert`** module in Node.js is primarily used for **writing tests** and verifying that code behaves as expected.
+
+**Key Points:**
+
+- Provides **assertion methods** to test **conditions and values**.
+- Throws an **error** if the assertion fails, helping identify bugs early.
+- Useful in **unit tests** and **simple verification** during development.
+
+**Example:**
+
+```javascript
+const assert = require('assert');
+
+const sum = (a, b) => a + b;
+
+assert.strictEqual(sum(2, 3), 5); // Passes
+assert.strictEqual(sum(2, 2), 5); // Throws AssertionError
+
+**Summary:**
+
+- assert is a `built-in Node.js module` for `verifying assumptions` in code.
+- Helps developers `catch errors early` and write `reliable tests`.
+```
+
+## 84. Why is ExpressJS used?
+
+**ExpressJS** is a popular framework for Node.js, widely used for building **web applications and APIs**.
+
+**Key Points:**
+
+- **Minimal and Flexible:** Provides a **lightweight framework** while allowing developers to structure applications as needed.
+- **Routing and Middleware:** Simplifies handling **HTTP requests, routes, and middleware**.
+- **Active Community:** Large ecosystem of **plugins, tutorials, and support**, making development easier.
+- **Performance:** Fast and efficient due to **Node.js non-blocking architecture**.
+- **Scalable:** Can be used for **small projects and enterprise-level applications**.
+
+**Summary:**  
+ExpressJS is chosen for **its simplicity, flexibility, and robust community support**, making it ideal for developing **web applications, REST APIs, and server-side applications** in Node.js.
