@@ -105,6 +105,12 @@ This section provides the **basic Node.js interview questions** which will prima
 82. [What are global objects in Node.js?](#82-what-are-global-objects-in-nodejs)
 83. [Why is assert used in Node.js?](#83-why-is-assert-used-in-nodejs)
 84. [Why is ExpressJS used?](#84-why-is-expressjs-used)
+85. [What is the use of the connect module in Node.js?](#85-what-is-the-use-of-the-connect-module-in-nodejs)
+86. [What's the difference between 'front-end' and 'back-end' development?](#86-whats-the-difference-between-front-end-and-back-end-development)
+87. [What are LTS releases of Node.js?](#87-what-are-lts-releases-of-nodejs)
+88. [What do you understand about ESLint?](#88-what-do-you-understand-about-eslint)
+89. [Define the concept of the test pyramid. Please explain the process of implementing them in terms of HTTP APIs.](#89-define-the-concept-of-the-test-pyramid-please-explain-the-process-of-implementing-them-in-terms-of-http-apis)
+90. [How does Node.js handle the child threads?](#90-how-does-nodejs-handle-the-child-threads)
 
 ---
 
@@ -1907,3 +1913,296 @@ assert.strictEqual(sum(2, 2), 5); // Throws AssertionError
 
 **Summary:**  
 ExpressJS is chosen for **its simplicity, flexibility, and robust community support**, making it ideal for developing **web applications, REST APIs, and server-side applications** in Node.js.
+
+## 85. What is the use of the connect module in Node.js?
+
+The **Connect module** in Node.js is a **middleware framework** that provides a foundation for building web applications and APIs. It is lightweight and extensible, and many frameworks (including **ExpressJS**) are built on top of Connect.
+
+### Key Uses:
+
+- **Middleware Handling:** Provides a way to manage and execute multiple middleware functions in the request/response cycle.
+- **Error Handling:** Allows adding custom or prebuilt **error-handling middleware** to catch and process errors.
+- **Cookie Parsing:** Supports middleware for **parsing cookies** from request headers.
+- **Session Management:** Enables **session middleware** for handling user sessions.
+- **Reusability:** Middleware functions are modular, reusable, and can be composed for different applications.
+
+### Example:
+
+```js
+const connect = require("connect");
+const app = connect();
+
+// Example middleware
+app.use((req, res, next) => {
+  console.log("Request received: " + req.url);
+  next();
+});
+
+app.use((req, res) => {
+  res.end("Hello from Connect!");
+});
+
+app.listen(3000);
+```
+
+### **Summary:**
+
+The Connect module is used to manage middleware efficiently in Node.js applications, providing a foundation for features like routing, session handling, cookies, and error management.
+
+## 86. What's the difference between 'front-end' and 'back-end' development?
+
+### **Front-End Development (Client-Side):**
+
+- Focuses on the **visual and interactive part** of a web application that users directly interact with.
+- Involves designing and building the **UI/UX**.
+- Technologies used:
+  - **HTML, CSS, JavaScript**
+  - Frameworks/Libraries: **React, Angular, Vue.js**
+- Responsibilities:
+  - Creating responsive layouts.
+  - Managing user interactions.
+  - Ensuring good performance across devices and browsers.
+
+### **Back-End Development (Server-Side):**
+
+- Focuses on the **logic, database, and server-side operations** of an application.
+- Handles data storage, security, and application performance.
+- Technologies used:
+  - Languages: **Node.js, PHP, Python, Java, Ruby**
+  - Databases: **MySQL, PostgreSQL, MongoDB**
+  - Frameworks: **Express.js, Django, Spring Boot, Laravel**
+- Responsibilities:
+  - Implementing APIs.
+  - Managing authentication & authorization.
+  - Handling business logic and database queries.
+
+### **Key Differences:**
+
+| Aspect      | Front-End (Client-Side)                  | Back-End (Server-Side)                    |
+| ----------- | ---------------------------------------- | ----------------------------------------- |
+| Focus       | User interface & experience              | Server logic, database, and APIs          |
+| Languages   | HTML, CSS, JavaScript                    | Node.js, PHP, Python, Java, Ruby, etc.    |
+| Frameworks  | React, Angular, Vue.js                   | Express, Laravel, Django, Spring Boot     |
+| Interaction | Directly with the user                   | Processes requests from front-end         |
+| Goal        | Make app visually appealing & responsive | Make app secure, scalable, and functional |
+
+### **Summary:**
+
+- **Front-end developers** build the part of the app users see and interact with.
+- **Back-end developers** build the behind-the-scenes logic, databases, and servers.
+- Together, they create a **full-stack application**.
+
+## 87. What are LTS releases of Node.js?
+
+**LTS** stands for **Long-Term Support**.  
+In Node.js, LTS releases are versions that receive **critical bug fixes, security updates, and performance improvements** for an extended period — typically **30 months** from their release date.
+
+### **Key Points about LTS Releases:**
+
+- Marked as **"Active LTS"** for 18 months (receives regular bug fixes, updates, and improvements).
+- Then moved to **"Maintenance LTS"** for another 12 months (only critical fixes and security patches).
+- LTS releases are intended for **production environments** because of their stability and long support.
+- Non-LTS versions (Current releases) are intended for testing new features but are **not recommended for production**.
+
+### **Example of Node.js Release Schedule:**
+
+| Release Type | Support Duration | Purpose                       |
+| ------------ | ---------------- | ----------------------------- |
+| **LTS**      | 30 months        | Stable, production-ready      |
+| **Current**  | ~6 months        | Latest features, experimental |
+
+### **Summary:**
+
+- **Use LTS versions for production apps** (ensures stability & security).
+- **Use Current versions for experimenting with the latest features**.
+
+## 88. What do you understand about ESLint?
+
+**ESLint** is a popular **open-source linting tool** for JavaScript and Node.js applications.  
+It helps developers **analyze code, find errors, and enforce coding standards** to maintain clean, consistent, and bug-free codebases.
+
+### **Key Features of ESLint:**
+
+- Detects **syntax errors** and **potential bugs**.
+- Enforces **coding style rules** (indentation, semicolons, quotes, etc.).
+- Supports **custom rules** and **plugins**.
+- Can automatically **fix many issues** with `--fix`.
+- Integrates with editors (VS Code, WebStorm, etc.) for real-time feedback.
+
+### **Example Usage:**
+
+```bash
+# Install ESLint locally
+npm install eslint --save-dev
+
+# Initialize ESLint config
+npx eslint --init
+
+# Lint a file
+npx eslint app.js
+```
+
+Example output might show unused variables, missing semicolons, or undefined variables.
+
+### **Why Use ESLint?**
+
+- Maintains consistent coding style across teams.
+- Reduces bugs by catching issues early.
+- Improves code quality and readability.
+- Essential in large projects and when multiple developers collaborate.
+
+### **Summary:**
+
+👉 ESLint is not just an error-checking tool — it’s a code quality enforcer that ensures best practices and standards are followed throughout your JavaScript/Node.js project.
+
+`⚡ Interview Tip:` If they ask _“How does ESLint help in team projects?”_, `Answer:`  
+✅ It ensures **everyone writes code in the same style**, reduces merge conflicts, and improves maintainability.
+
+## 89. Define the concept of the test pyramid. Please explain the process of implementing them in terms of HTTP APIs.
+
+The **test pyramid** is a concept in software testing that illustrates the **ideal balance of automated tests** in a project.  
+It emphasizes having **many small and fast unit tests**, fewer integration tests, and even fewer end-to-end (E2E) tests.
+
+### **The Three Layers of the Test Pyramid:**
+
+1. **Unit Tests (Base of the Pyramid)**
+   - Test small, isolated pieces of code (e.g., functions, controllers).
+   - Run very fast and give quick feedback.
+   - Example: Testing an API route handler without hitting the database.
+2. **Integration Tests (Middle Layer)**
+   - Test interactions between modules or services.
+   - Example: Test if an API endpoint properly integrates with the database or external service.
+3. **End-to-End (E2E) Tests (Top of the Pyramid)**
+   - Test the system as a whole, simulating real-world scenarios.
+   - Example: Sending an HTTP request to the API and checking if the correct response is returned after processing.
+
+---
+
+### **Implementing the Test Pyramid for HTTP APIs**
+
+1. **Unit Tests (Majority)**
+
+   - Test **controllers, validators, and services** in isolation.
+   - Use mocking/stubbing for dependencies.
+
+   ```javascript
+   // Example: Jest unit test for a controller
+   const requestHandler = require("../controllers/userController");
+   const userService = require("../services/userService");
+
+   test("should return user data", async () => {
+     userService.getUser = jest.fn().mockResolvedValue({ id: 1, name: "John" });
+     const req = { params: { id: 1 } };
+     const res = { json: jest.fn() };
+
+     await requestHandler.getUser(req, res);
+     expect(res.json).toHaveBeenCalledWith({ id: 1, name: "John" });
+   });
+   ```
+
+2. **Integration Tests**
+
+- Test if endpoints work correctly with the database or services.
+- Run with a test database.
+
+```javascript
+const request = require("supertest");
+const app = require("../app");
+
+describe("GET /users/:id", () => {
+  it("should return user from DB", async () => {
+    const res = await request(app).get("/users/1");
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty("name");
+  });
+});
+```
+
+3. **End-to-End (E2E) Tests**
+
+- Simulate full user flows with real DB, API, and possibly UI.
+- Example: Creating a user and then fetching it.
+
+```javascript
+describe("E2E: User API", () => {
+  it("should create and retrieve a user", async () => {
+    const createRes = await request(app).post("/users").send({ name: "Alice" });
+
+    const getRes = await request(app).get(`/users/${createRes.body.id}`);
+    expect(getRes.body.name).toBe("Alice");
+  });
+});
+```
+
+### **Key Benefits of Following the Test Pyramid**
+
+- Faster feedback from unit tests.
+- Confidence in API correctness with integration tests.
+- Real-world validation with fewer but important E2E tests.
+- Balanced test suite → reduces flakiness and speeds up CI/CD pipelines.
+
+### **Summary**
+
+`👉 The test pyramid ensures a balanced testing strategy:`
+
+- Many unit tests for speed & reliability.
+- Some integration tests for correctness.
+- Few E2E tests for real-world assurance.
+- In HTTP APIs, this means starting small (endpoint logic), moving up to DB/API integration, and finishing with end-user scenarios.
+
+`⚡ Interview tip:` If asked _“Why fewer E2E tests?”_ → `Answer:` Because they’re **slower, costlier, and more fragile**, so we rely more on **unit and integration tests** for speed.
+
+### 90. How does Node.js handle the child threads?
+
+Node.js is `single-threaded` by default (using the event loop model), but it provides ways to handle `child threads or parallel execution` through:
+
+1. **`child_process` module**
+
+- Node.js allows creating `child processes` (not threads) that run independently.
+- You can use methods like:
+  - `spawn()` → for starting a new process.
+  - `exec()` → for executing shell commands.
+  - `fork()` → for creating new Node.js instances that can communicate with the parent process via messaging.
+- Each child process runs in its own memory space but can `communicate with the parent using IPC (Inter-Process Communication)`.
+
+**Example:**
+
+```javascript
+const { fork } = require("child_process");
+
+const child = fork("child.js");
+
+child.on("message", (msg) => {
+  console.log("Message from child:", msg);
+});
+
+child.send({ task: "processData" });
+```
+
+2. **Worker Threads (`worker_threads` module)**
+
+- Since Node.js v10.5.0 (stable in v12+), you can use `Worker Threads` to run JavaScript in parallel threads within the same process.
+- Unlike `child_process`, workers share memory using `SharedArrayBuffer`.
+
+**Example:**
+
+```javascript
+const { Worker } = require("worker_threads");
+
+const worker = new Worker("./worker.js", { workerData: { number: 5 } });
+
+worker.on("message", (result) => {
+  console.log("Result from worker:", result);
+});
+```
+
+3. **Libuv Thread Pool**
+
+- Internally, Node.js uses `Libuv` which has a thread pool (default size = 4) to handle expensive tasks like file system operations, DNS lookups, and crypto operations.
+- This allows Node.js to delegate heavy work to background threads, so the event loop remains non-blocking.
+
+**✅ In short:**
+
+- Node.js doesn’t use threads like Java or C# by default.
+- It achieves concurrency via `event loop + Libuv thread pool`.
+- For explicit parallelism, developers can use `child_process` or `worker_threads`.
