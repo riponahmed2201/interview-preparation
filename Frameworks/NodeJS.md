@@ -111,6 +111,28 @@ This section provides the **basic Node.js interview questions** which will prima
 88. [What do you understand about ESLint?](#88-what-do-you-understand-about-eslint)
 89. [Define the concept of the test pyramid. Please explain the process of implementing them in terms of HTTP APIs.](#89-define-the-concept-of-the-test-pyramid-please-explain-the-process-of-implementing-them-in-terms-of-http-apis)
 90. [How does Node.js handle the child threads?](#90-how-does-nodejs-handle-the-child-threads)
+91. [What is an Event Emitter in Node.js?](#91-what-is-an-event-emitter-in-nodejs)
+92. [How to Enhance Node.js Performance through Clustering?](#92-how-to-enhance-nodejs-performance-through-clustering)
+93. [What is a thread pool, and which library handles it in Node.js?](#93-what-is-a-thread-pool-and-which-library-handles-it-in-nodejs)
+94. - [How are worker threads different from clusters?](#94-how-are-worker-threads-different-from-clusters)
+95. [How to measure the duration of async operations?](#95-how-to-measure-the-duration-of-async-operations)
+96. [How to measure the performance of async operations?](#96-how-to-measure-the-performance-of-async-operations)
+97. [What are the types of streams available in Node.js?](#97-what-are-the-types-of-streams-available-in-nodejs)
+98. [What is meant by tracing in Node.js?](#98-what-is-meant-by-tracing-in-nodejs)
+99. [Where is package.json used in Node.js?](#99-where-is-packagejson-used-in-nodejs)
+100. [What is the difference between readFile and createReadStream in Node.js?](#100-what-is-the-difference-between-readfile-and-createreadstream-in-nodejs)
+101. [What is the use of the crypto module in Node.js?](#101-what-is-the-use-of-the-crypto-module-in-nodejs)
+102. [What is a passport in Node.js?](#102-what-is-a-passport-in-nodejs)
+103. [How to get information about a file in Node.js?](#103-how-to-get-information-about-a-file-in-nodejs)
+104. [How does the DNS lookup function work in Node.js?](#104-how-does-the-dns-lookup-function-work-in-nodejs)
+105. [What is the difference between setImmediate() and setTimeout()?](#105-what-is-the-difference-between-setimmediate-and-settimeout)
+106. [Explain the concept of Punycode in Node.js](#106-explain-the-concept-of-punycode-in-nodejs)
+107. [Does Node.js provide any Debugger?](#107-does-nodejs-provide-any-debugger)
+108. [Is cryptography supported in Node.js?](#108-is-cryptography-supported-in-nodejs)
+109. [Why do you think you are the right fit for this Node.js role?](#109-why-do-you-think-you-are-the-right-fit-for-this-nodejs-role)
+110. [Do you have any past Node.js work experience?](#110-do-you-have-any-past-nodejs-work-experience)
+111. [Do you have any experience working in the same industry as ours?](#111-do-you-have-any-experience-working-in-the-same-industry-as-ours)
+112. [Do you have any certification to boost your candidature for this Node.js role?](#112-do-you-have-any-certification-to-boost-your-candidature-for-this-nodejs-role)
 
 ---
 
@@ -2206,3 +2228,1033 @@ worker.on("message", (result) => {
 - Node.js doesn’t use threads like Java or C# by default.
 - It achieves concurrency via `event loop + Libuv thread pool`.
 - For explicit parallelism, developers can use `child_process` or `worker_threads`.
+
+### 91. What is an Event Emitter in Node.js?
+
+An **Event Emitter** in Node.js is a module that facilitates **communication between objects** in an application.
+
+- It is an instance of the **`EventEmitter`** class (from the `events` module).
+- Provides methods like:
+  - **`.on(event, listener)`** → Attach a listener.
+  - **`.emit(event, args)`** → Emit (trigger) an event.
+  - **`.once(event, listener)`** → Attach a one-time listener.
+- Used extensively for handling **asynchronous operations** such as streams, HTTP requests, sockets, etc.
+
+✅ Example:
+
+```js
+const EventEmitter = require("events");
+const emitter = new EventEmitter();
+
+emitter.on("greet", (name) => {
+  console.log(`Hello, ${name}!`);
+});
+
+emitter.emit("greet", "Siful");
+```
+
+**Output:**
+
+```js
+Hello, Siful!
+```
+
+### 92. How to Enhance Node.js Performance through Clustering?
+
+**Clustering** in Node.js allows you to take advantage of **multi-core CPUs** by spawning multiple worker processes that share the same server port.
+
+- Each worker runs on its **own event loop** but shares the same server.
+- The `cluster` module is used to implement clustering.
+- Improves performance for CPU-bound and I/O-heavy applications (like HTTP servers and DB connections).
+- ⚠️ Clustering does **not guarantee linear performance gains** because of shared resources and overhead in process communication.
+
+✅ Example:
+
+```js
+const cluster = require("cluster");
+const http = require("http");
+const os = require("os");
+
+if (cluster.isMaster) {
+  const numCPUs = os.cpus().length;
+  console.log(`Master process running. Forking ${numCPUs} workers...`);
+
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on("exit", (worker) => {
+    console.log(`Worker ${worker.process.pid} died. Restarting...`);
+    cluster.fork();
+  });
+} else {
+  http
+    .createServer((req, res) => {
+      res.writeHead(200);
+      res.end(`Handled by worker: ${process.pid}`);
+    })
+    .listen(3000);
+
+  console.log(`Worker ${process.pid} started`);
+}
+```
+
+**Benefits:**
+
+- Utilizes multiple CPU cores.
+- Handles more concurrent requests.
+- Provides resilience (workers restart on crash).
+
+### 93. What is a thread pool, and which library handles it in Node.js?
+
+A **thread pool** is a collection of pre-initialized worker threads that are used to perform tasks concurrently without creating a new thread for each task.
+
+In **Node.js**, the thread pool is managed by the **libuv** library.
+
+- Node.js itself is single-threaded for JavaScript execution.
+- However, I/O-intensive operations (like file system access, DNS lookup, cryptography, compression, etc.) are offloaded to the **libuv thread pool**.
+- By default, the thread pool size is **4**, but it can be configured using the environment variable:
+
+```bash
+UV_THREADPOOL_SIZE=8 node app.js
+```
+
+**✅ Example:** Using crypto.pbkdf2 (which uses libuv thread pool internally):
+
+```js
+const crypto = require("crypto");
+
+for (let i = 0; i < 5; i++) {
+  crypto.pbkdf2("password", "salt", 100000, 64, "sha512", () => {
+    console.log(`Task ${i + 1} finished`);
+  });
+}
+```
+
+**Key Notes:**
+
+- JavaScript runs on a single main thread (event loop).
+- Expensive async operations are delegated to libuv’s thread pool.
+- This prevents blocking of the main event loop.
+
+### 94. How are worker threads different from clusters?
+
+**Worker Threads** and **Clusters** are two different approaches in Node.js to take advantage of multi-core CPUs.
+
+#### 🔹 Clusters
+
+- Create multiple **instances of the Node.js process**.
+- Each process runs independently on a separate CPU core.
+- Processes do **not share memory** directly.
+- Inter-process communication (IPC) is used for communication between processes.
+- Often used to scale **HTTP servers**.
+
+#### 🔹 Worker Threads
+
+- Create multiple **threads within a single Node.js process**.
+- All threads share the **same memory** (can use `SharedArrayBuffer`).
+- Useful for **CPU-intensive tasks** (e.g., data processing, ML computations).
+- Threads can communicate using `MessageChannel` or `postMessage`.
+
+---
+
+#### ✅ Comparison Table
+
+| Feature         | Clusters                          | Worker Threads                  |
+| --------------- | --------------------------------- | ------------------------------- |
+| Execution Model | Multiple processes                | Multiple threads in one process |
+| Memory          | Separate memory per process       | Shared memory possible          |
+| Communication   | Inter-process communication (IPC) | Message passing / Shared memory |
+| Use Case        | Scaling servers (I/O tasks)       | Heavy CPU-bound tasks           |
+
+---
+
+#### Example: Worker Threads
+
+```js
+const { Worker, isMainThread, parentPort } = require("worker_threads");
+
+if (isMainThread) {
+  console.log("Main thread running");
+  const worker = new Worker(__filename);
+  worker.on("message", (msg) => console.log("From worker:", msg));
+} else {
+  parentPort.postMessage("Hello from worker!");
+}
+```
+
+**Example:** `Clusters`
+
+```js
+const cluster = require("cluster");
+const http = require("http");
+const os = require("os");
+
+if (cluster.isMaster) {
+  const numCPUs = os.cpus().length;
+  console.log(`Master process running. Forking ${numCPUs} workers...`);
+  for (let i = 0; i < numCPUs; i++) cluster.fork();
+} else {
+  http
+    .createServer((req, res) => {
+      res.writeHead(200);
+      res.end("Hello from Cluster Worker");
+    })
+    .listen(3000);
+}
+```
+
+### 95. How to measure the duration of async operations?
+
+In Node.js, you can measure the duration of asynchronous operations using:
+
+1. **`console.time()` / `console.timeEnd()`** → Simple and effective for quick measurements.
+2. **`performance.now()`** → Provides higher precision timing in milliseconds.
+
+---
+
+#### ✅ Using `console.time` and `console.timeEnd`
+
+````js
+console.time("fetchData");
+
+setTimeout(() => {
+  console.timeEnd("fetchData");
+}, 2000);
+
+**Output:**
+
+```js
+fetchData: 2003.123ms
+````
+
+**✅ Example with Promises**
+
+```js
+console.time("dbQuery");
+
+new Promise((resolve) => setTimeout(resolve, 1500)).then(() => {
+  console.timeEnd("dbQuery");
+});
+```
+
+**Output:**
+
+```js
+dbQuery: 1501.567ms
+```
+
+**✅ Using performance.now()**
+
+```js
+const { performance } = require("perf_hooks");
+
+async function fetchData() {
+  const start = performance.now();
+
+  await new Promise((resolve) => setTimeout(resolve, 1500));
+
+  const end = performance.now();
+  console.log(`Duration: ${end - start} ms`);
+}
+
+fetchData();
+```
+
+**Output:**
+
+```js
+Duration: 1501.456 ms
+```
+
+**✅ Best Practice:**
+
+- Use console.time for quick debugging.
+- Use performance.now() (from perf_hooks) when you need high-resolution and accurate benchmarking.
+
+### 96. How to measure the performance of async operations?
+
+Measuring the performance of async operations in Node.js can be done using built-in tools and third-party libraries.
+
+---
+
+#### ✅ 1. Using the `--prof` flag
+
+Run your script with the V8 profiler:
+
+```bash
+node --prof app.js
+```
+
+This generates a log file (isolate-\*.log) that can be processed with:
+
+```bash
+node --prof-process isolate-*.log > processed.txt
+```
+
+#### ✅ 2. Using Linux `--prof` tool
+
+On Linux systems, you can use perf to measure performance counters and CPU usage:
+
+```bash
+perf record -g node app.js
+perf report
+```
+
+#### ✅ 3. Using `benchmark.js` for precise benchmarking
+
+`benchmark.js` allows running benchmarks with statistical accuracy.
+
+```bash
+npm install benchmark
+```
+
+```js
+const Benchmark = require("benchmark");
+
+const suite = new Benchmark.Suite();
+
+suite
+  .add("Async Operation", {
+    defer: true,
+    fn: (deferred) => {
+      setTimeout(() => deferred.resolve(), 500);
+    },
+  })
+  .on("cycle", (event) => {
+    console.log(String(event.target));
+  })
+  .on("complete", function () {
+    console.log("Fastest is " + this.filter("fastest").map("name"));
+  })
+  .run({ async: true });
+```
+
+**Output Example:**
+
+```js
+Async Operation x 1.99 ops/sec ±1.11% (10 runs sampled)
+Fastest is Async Operation
+```
+
+**✅ Best Practice:**
+
+- Use `--prof` for in-depth CPU profiling.
+- Use `perf` for low-level system performance insights.
+- Use `benchmark.js` for micro-benchmarking async tasks.
+
+### 97. What are the types of streams available in Node.js?
+
+Streams in Node.js are objects that let you read data from a source or write data to a destination in a **continuous manner**.
+
+There are **four main types of streams**:
+
+---
+
+#### 1. Readable Streams
+
+Used to **read data** from a source.  
+Example: `fs.createReadStream()`
+
+```js
+const fs = require("fs");
+
+const readableStream = fs.createReadStream("input.txt", "utf-8");
+readableStream.on("data", (chunk) => {
+  console.log("Received chunk:", chunk);
+});
+```
+
+#### 2. Writable Streams
+
+Used to `write data` to a destination.
+**Example:** `fs.createWriteStream()`
+
+```js
+const fs = require("fs");
+
+const writableStream = fs.createWriteStream("output.txt");
+writableStream.write("Hello, World!\n");
+writableStream.end("Writing completed.");
+```
+
+#### 3. Writable Streams
+
+Can be `both readable and writable`.
+**Example:** `net.Socket`
+
+```js
+const { Duplex } = require("stream");
+
+const duplexStream = new Duplex({
+  read(size) {
+    this.push("Hello from duplex!\n");
+    this.push(null); // End stream
+  },
+  write(chunk, encoding, callback) {
+    console.log("Writing:", chunk.toString());
+    callback();
+  },
+});
+
+duplexStream.on("data", (data) => console.log("Read:", data.toString()));
+duplexStream.write("This is a test message.");
+```
+
+#### 4. Transform Streams
+
+A special type of `duplex stream` where the output is computed based on the input.
+Example: `zlib.createGzip()`
+
+```js
+const fs = require("fs");
+const zlib = require("zlib");
+
+const gzip = zlib.createGzip();
+const readable = fs.createReadStream("input.txt");
+const writable = fs.createWriteStream("input.txt.gz");
+
+readable.pipe(gzip).pipe(writable);
+```
+
+**✅ Summary:**
+
+- `Readable` → For reading data
+- `Writable` → For writing data
+- `Duplex` → Both read & write
+- `Transform` → Modify data while reading/writing
+
+### 98. What is meant by tracing in Node.js?
+
+**Tracing** in Node.js is a technique used to **profile and debug performance** by recording details about the function calls, system events, and async operations that occur during execution.
+
+It helps developers:
+
+- Understand application flow
+- Detect performance bottlenecks
+- Debug complex async behavior
+- Optimize system resource usage
+
+---
+
+#### 🔹 Enabling Tracing
+
+You can enable tracing in Node.js using the `--trace-events-enabled` flag:
+
+```bash
+node --trace-events-enabled server.js
+```
+
+This generates trace log files (`.json`) that can be analyzed in tools like `Chrome DevTools`.
+
+**🔹 Example:**
+
+```js
+const trace_events = require("trace_events");
+const tracing = trace_events.createTracing({ categories: ["node", "v8"] });
+
+tracing.enable(); // Start tracing
+console.log("Tracing enabled...");
+
+setTimeout(() => {
+  console.log("Operation complete.");
+  tracing.disable(); // Stop tracing
+  console.log("Tracing disabled.");
+}, 1000);
+```
+
+**✅ Summary**
+
+- Tracing captures execution details of Node.js applications.
+- Helps with performance profiling and debugging.
+- Can be analyzed in external tools for deeper insights.
+
+### 99. Where is package.json used in Node.js?
+
+The **`package.json`** file is located in the **root directory** of a Node.js application.  
+It serves as the **manifest file** for the project and is used by **npm (Node Package Manager)** or **yarn** to install, manage, and track dependencies.
+
+---
+
+#### 🔹 Purpose of `package.json`
+
+1. Defines project **metadata** (name, version, description).
+2. Lists **dependencies** and **devDependencies**.
+3. Contains **scripts** to automate tasks (e.g., `npm start`, `npm test`).
+4. Specifies **Node.js version compatibility**.
+5. Helps in **project sharing and deployment**.
+
+---
+
+#### 🔹 Example: `package.json`
+
+```json
+{
+  "name": "my-app",
+  "version": "1.0.0",
+  "description": "A sample Node.js application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}
+```
+
+**✅ Summary**
+
+- Located in the `root directory`.
+- Used by `npm/yarn` to install and manage dependencies.
+- Stores project metadata, scripts, and dependency info.
+
+### 100. What is the difference between `readFile` and `createReadStream` in Node.js?
+
+Node.js provides two main ways to read files: **`fs.readFile`** and **`fs.createReadStream`**. The choice depends on **file size** and **application requirements**.
+
+---
+
+#### 🔹 `fs.readFile`
+
+- Reads the **entire file into memory** at once.
+- Suitable for **small files**.
+- **Callback-based**: waits for the file to be completely read before executing the callback.
+
+```js
+const fs = require("fs");
+
+fs.readFile("smallFile.txt", "utf-8", (err, data) => {
+  if (err) throw err;
+  console.log(data);
+});
+```
+
+`Pros:` Simple and easy to use for small files.
+`Cons:` Not memory efficient for large files.
+
+`🔹 fs.createReadStream`
+
+- Reads the file in `small chunks`.
+- Suitable for `large files` (does not load entire file into memory).
+- Can `pipe` the data directly to writable streams (e.g., `HTTP` response, file, compression).
+
+```js
+const fs = require("fs");
+
+const readableStream = fs.createReadStream("largeFile.txt", "utf-8");
+readableStream.on("data", (chunk) => {
+  console.log("Received chunk:", chunk);
+});
+```
+
+`Pros:` Memory efficient, can handle large files, supports streaming pipelines.
+Cons: Slightly more complex than `readFile`.
+
+---
+
+**✅ Summary**
+
+| Feature               | `readFile`        | `createReadStream`            |
+| --------------------- | ----------------- | ----------------------------- |
+| File Size Suitability | Small files       | Large files                   |
+| Memory Usage          | Loads entire file | Streams in chunks             |
+| Use Case              | Quick reads       | Streaming, piping, large data |
+| Complexity            | Simple            | Slightly complex              |
+
+**Best Practice:**
+
+- Use readFile for small config or text files.
+- Use createReadStream for large files, streaming data, or when memory efficiency is critical.
+
+### 101. What is the use of the crypto module in Node.js?
+
+The **`crypto`** module in Node.js provides **cryptographic functionality** for securing data and performing encryption operations.
+
+---
+
+#### 🔹 Key Uses:
+
+1. **Generate secure random numbers**
+2. **Create digital signatures** and **verify them**
+3. **Hash data** (e.g., passwords, files)
+4. **Encrypt and decrypt data** using algorithms like AES, DES, RSA
+
+---
+
+#### 🔹 Example: Creating a Hash
+
+```js
+const crypto = require("crypto");
+
+const data = "Hello, Node.js!";
+const hash = crypto.createHash("sha256").update(data).digest("hex");
+
+console.log("SHA-256 Hash:", hash);
+```
+
+**Output:**
+
+```js
+SHA-256 Hash: e7cf3ef4f17c3999a94f2c6f612e8a888e5b4b5e6e2b0a2e4ef0d123456789ab
+```
+
+#### 🔹 Example: Generating a Random Token
+
+```js
+const crypto = require("crypto");
+
+const token = crypto.randomBytes(16).toString("hex");
+console.log("Random Token:", token);
+```
+
+**Output:**
+
+```js
+Random Token: 9f1b5c7d2e4a8f1b3c6d7e9f0a1b2c3d
+```
+
+**✅ Summary:**
+
+- The crypto module is essential for security-related tasks.
+- It supports hashing, encryption, digital signatures, and random number generation.
+- Widely used in authentication, data protection, and secure communications.
+
+### 102. What is a Passport in Node.js?
+
+**Passport** is a popular **authentication middleware** for Node.js that provides a **simple and modular approach** to implement authentication in web applications.
+
+---
+
+#### 🔹 Key Features:
+
+1. **Modular and flexible** – supports many authentication strategies.
+2. **Supports multiple login methods**:
+   - Username/Password
+   - OAuth (Google, Facebook, Twitter)
+   - JSON Web Tokens (JWT)
+3. **Integrates easily** with Express or other Node.js frameworks.
+
+---
+
+#### 🔹 Example: Using Passport with Local Strategy
+
+```js
+const express = require("express");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+
+const app = express();
+
+// Configure the local strategy
+passport.use(
+  new LocalStrategy((username, password, done) => {
+    if (username === "admin" && password === "1234") {
+      return done(null, { username: "admin" });
+    } else {
+      return done(null, false, { message: "Invalid credentials" });
+    }
+  })
+);
+
+// Initialize passport middleware
+app.use(passport.initialize());
+
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/dashboard",
+    failureRedirect: "/login",
+  })
+);
+
+app.listen(3000, () => console.log("Server running on port 3000"));
+```
+
+**✅ Summary:**
+
+- ~Passport~ is a middleware for ~authentication~ in Node.js.
+- It allows developers to implement ~secure login~ using various strategies.
+- It is widely used in ~Express.js applications~ for handling user authentication.
+
+### 103. How to get information about a file in Node.js?
+
+In Node.js, you can use the built-in **`fs`** module to interact with the file system. To get information about a file, use the **`fs.stat()`** method (or its promise-based version, `fs.promises.stat`).
+
+This method returns an object containing details about the file, such as **size, creation date, modified date, and file type**.
+
+---
+
+#### 🔹 Example: Using `fs.stat`
+
+```js
+const fs = require("fs");
+
+fs.stat("example.txt", (err, stats) => {
+  if (err) {
+    console.error("Error reading file stats:", err);
+    return;
+  }
+  console.log("File Stats:", stats);
+  console.log("Is file:", stats.isFile());
+  console.log("File size:", stats.size, "bytes");
+  console.log("Created at:", stats.birthtime);
+  console.log("Last modified:", stats.mtime);
+});
+```
+
+#### 🔹 Example: Using fs.promises.stat (Async/Await)`
+
+```js
+const fs = require("fs").promises;
+
+async function getFileInfo() {
+  try {
+    const stats = await fs.stat("example.txt");
+    console.log("File Stats:", stats);
+    console.log("Is file:", stats.isFile());
+    console.log("File size:", stats.size, "bytes");
+    console.log("Created at:", stats.birthtime);
+    console.log("Last modified:", stats.mtime);
+  } catch (err) {
+    console.error("Error:", err);
+  }
+}
+
+getFileInfo();
+```
+
+**✅ Summary:**
+
+- Use `fs.stat()` to get metadata of a file.
+- Returns a `Stats object` with info like size, creation date, modified date, and file type.
+- Can use either `callback` or promise-based `async/await` style.
+
+### 104. How does the DNS lookup function work in Node.js?
+
+Node.js provides a built-in **`dns`** module to perform DNS-related operations. DNS (Domain Name System) is responsible for translating **domain names** (like `example.com`) into **IP addresses**.
+
+The **`dns.lookup()`** method is used to resolve a domain name into an IP address.
+
+---
+
+#### 🔹 Example: Using `dns.lookup`
+
+```js
+const dns = require("dns");
+
+dns.lookup("example.com", (err, address, family) => {
+  if (err) {
+    console.error("DNS Lookup Error:", err);
+    return;
+  }
+  console.log("IP Address:", address);
+  console.log("Address Family:", family);
+});
+```
+
+**Output Example:**
+
+```js
+IP Address: 93.184.216.34
+Address Family: 4
+```
+
+**🔹 Notes:**
+
+- `address` → The resolved IP address.
+- `family` → Indicates IPv4 (4) or IPv6 (6).
+- `dns.lookup()` uses the OS resolver.
+- For more advanced queries (like MX, TXT records), use `dns.resolve()` methods.
+
+---
+
+**✅ Summary:**
+
+- `dns.lookup()` resolves domain names to IP addresses.
+- Useful for networking tasks like connecting to servers or making HTTP requests.
+- Part of the Node.js built-in `dns` module.
+
+### 105. What is the difference between `setImmediate()` and `setTimeout()`?
+
+Both **`setImmediate()`** and **`setTimeout()`** are used to schedule code execution in Node.js, but they behave differently in terms of **timing and event loop priority**.
+
+---
+
+#### 🔹 `setTimeout()`
+
+- Schedules a function to run **after a specified delay** (in milliseconds).
+- Even with `0` delay, it executes **after the current poll phase** of the event loop.
+
+```js
+setTimeout(() => {
+  console.log("Executed by setTimeout");
+}, 0);
+```
+
+#### 🔹 `setImmediate()`
+
+- Schedules a function to run **immediately after the current event loop iteration** completes.
+- Executes **before any timers scheduled with setTimeout()** in the same iteration.
+
+```js
+setImmediate(() => {
+  console.log("Executed by setImmediate");
+});
+```
+
+#### 🔹 `Comparison Example`
+
+```js
+setTimeout(() => {
+  console.log("setTimeout");
+}, 0);
+
+setImmediate(() => {
+  console.log("setImmediate");
+});
+```
+
+#### 🔹 `Possible Output:`
+
+```js
+setImmediate;
+setTimeout;
+```
+
+`setImmediate` usually runs before `setTimeout` with 0ms delay because it is executed in the check phase of the event loop.
+
+---
+
+#### ✅ Summary:
+
+| Feature          | `setTimeout()`        | `setImmediate()`              |
+| ---------------- | --------------------- | ----------------------------- |
+| Execution timing | After specified delay | After current event loop      |
+| Event loop phase | Timers phase          | Check phase                   |
+| Typical use case | Delayed execution     | Immediate execution next tick |
+
+### 106. Explain the concept of Punycode in Node.js
+
+**Punycode** is a **character encoding scheme** used in the **Domain Name System (DNS)** to represent **Unicode characters** with **ASCII characters**.
+
+It allows domain names containing **non-ASCII characters** (like Chinese, Arabic, or emoji) to be converted into a format that DNS can understand.
+
+---
+
+#### 🔹 Key Points:
+
+1. Punycode is used for **internationalized domain names (IDNs)**.
+2. Converts Unicode to ASCII using the **`xn--` prefix**.
+3. Ensures compatibility with systems that only support ASCII domain names.
+
+---
+
+#### 🔹 Example: Using Punycode in Node.js
+
+```js
+const punycode = require("punycode/");
+
+const unicodeDomain = "münich.com";
+const asciiDomain = punycode.toASCII(unicodeDomain);
+
+console.log("ASCII Domain:", asciiDomain); // Output: xn--mnich-kva.com
+
+const decodedDomain = punycode.toUnicode(asciiDomain);
+console.log("Decoded Domain:", decodedDomain); // Output: münich.com
+```
+
+---
+
+#### ✅ Summary:
+
+- **Punycode** converts Unicode domain names into ASCII for DNS compatibility.
+- Useful for **internationalized domain names (IDNs)**.
+- Node.js provides a built-in `punycode` module for encoding and decoding.
+
+### 107. Does Node.js provide any Debugger?
+
+Yes, **Node.js provides a built-in debugger** that allows developers to **inspect and debug Node.js applications**.
+
+The debugger helps in:
+
+- Setting **breakpoints**
+- Inspecting **variables**
+- Stepping through code line by line
+- Profiling and analyzing performance
+
+---
+
+#### 🔹 Ways to Use Node.js Debugger
+
+1. **Using `node inspect`**
+
+```bash
+node inspect app.js
+```
+
+- Starts the debugger in the terminal.
+- Allows commands like cont, next, step, and break to control execution.
+
+2. **Using Chrome DevTools**
+
+```bash
+node --inspect-brk app.js
+```
+
+- Opens a debugging session accessible via Chrome DevTools.
+- Provides **graphical interface** for breakpoints and stepping through code.
+
+3. **Using Visual Studio Code**
+
+- VS Code has **built-in Node.js debugging support**.
+- You can set breakpoints and inspect variables directly in the editor.
+
+---
+
+#### ✅ Summary:
+
+- Node.js has a built-in debugger for inspecting and debugging apps.
+- Can be used via terminal (node inspect), Chrome DevTools, or IDE integrations.
+- Useful for tracking down bugs, analyzing performance, and improving code quality.
+
+### 108. Is cryptography supported in Node.js?
+
+Yes, **Node.js provides built-in support for cryptography** through the **`crypto`** module.
+
+This module allows developers to perform:
+
+- **Hashing** (SHA, MD5, etc.)
+- **Encryption and decryption** (AES, DES, RSA, etc.)
+- **Digital signatures and verification**
+- **Secure random number generation**
+
+---
+
+#### 🔹 Example: Hashing a String
+
+```js
+const crypto = require("crypto");
+
+const data = "Hello, Node.js!";
+const hash = crypto.createHash("sha256").update(data).digest("hex");
+
+console.log("SHA-256 Hash:", hash);
+```
+
+#### 🔹 Example: Generating a Random Token
+
+```js
+const crypto = require("crypto");
+
+const token = crypto.randomBytes(16).toString("hex");
+console.log("Random Token:", token);
+```
+
+---
+
+#### ✅ Summary:
+
+- Crypto module provides all essential cryptography functions.
+- Used for security tasks such as hashing passwords, encrypting data, and creating secure tokens.
+- Built-in module, no external installation required.
+
+### 109. Why do you think you are the right fit for this Node.js role?
+
+As a Node.js developer, I bring **hands-on experience in building scalable and efficient server-side applications** using Node.js.
+
+---
+
+#### 🔹 Key Strengths:
+
+1. **Practical Node.js Experience** – Built RESTful APIs, real-time applications, and microservices.
+2. **Team Collaboration** – Strong teamwork and communication skills for working in agile environments.
+3. **Problem Solving** – Skilled at debugging, optimizing performance, and writing maintainable code.
+4. **Adaptability** – Able to quickly learn and implement new technologies and frameworks.
+
+---
+
+#### 🔹 Summary:
+
+- My combination of **technical expertise** and **soft skills** makes me a strong candidate.
+- I can contribute to **building robust, efficient, and maintainable Node.js applications**.
+
+---
+
+### 110. Do you have any past Node.js work experience?
+
+Yes, my past Node.js work experience has provided me with a **solid foundation in building scalable and efficient server-side applications** using Node.js.
+
+---
+
+#### 🔹 Key Highlights:
+
+1. **RESTful APIs** – Developed APIs for CRUD operations and complex workflows.
+2. **Real-time Applications** – Built chat and notification systems using WebSocket and Socket.IO.
+3. **Database Integration** – Worked with MongoDB, PostgreSQL, and MySQL for backend data management.
+4. **Performance Optimization** – Implemented caching, clustering, and asynchronous processing for better performance.
+5. **Testing & Debugging** – Used Jest, Mocha, and built-in Node.js debugger to ensure reliable code.
+
+---
+
+✅ **Summary:**
+
+- My experience equips me to handle **complex Node.js projects efficiently**.
+- Familiar with **best practices**, design patterns, and **scalable architectures** in Node.js.
+
+### 111. Do you have any experience working in the same industry as ours?
+
+Yes, I have worked on several **Node.js projects** in the past, which provided me with relevant experience that aligns with your industry.
+
+---
+
+#### 🔹 Key Highlights:
+
+1. **Industry-Relevant Projects** – Delivered projects that required similar business logic and workflows.
+2. **Domain Knowledge** – Gained familiarity with **industry standards, compliance, and best practices**.
+3. **Technology Stack** – Worked with **Node.js, Express, databases, and related tools** applicable to your domain.
+4. **Problem Solving** – Experienced in handling challenges specific to this industry, such as scalability, performance, and security.
+
+---
+
+✅ **Summary:**
+
+- My previous experience allows me to quickly **adapt and contribute effectively**.
+- I can bring **insights and best practices** from similar projects to your team.
+
+### 112. Do you have any certification to boost your candidature for this Node.js role?
+
+Yes, I am **OpenJS Node.js Services Developer (JSNSD) Certified**, which validates my **expertise and proficiency in Node.js development**.
+
+---
+
+#### 🔹 Key Highlights of Certification:
+
+1. **Core Node.js Knowledge** – Demonstrates understanding of Node.js architecture, modules, and runtime environment.
+2. **Asynchronous Programming** – Validates skills in handling asynchronous operations, callbacks, promises, and async/await.
+3. **Server-Side Development** – Confirms ability to build scalable and efficient server-side applications.
+4. **Best Practices** – Knowledge of security, performance optimization, and debugging in Node.js applications.
+
+---
+
+✅ **Summary:**
+
+- The **JSNSD certification** enhances my credibility and shows that I have a **professional-level understanding** of Node.js.
+- Supports my candidacy for roles that require **advanced Node.js skills and practical experience**.
+
+### References:
+
+1. Simplilearn: https://www.simplilearn.com/tutorials/nodejs-tutorialnodejs-interview-questions
+2. Geeksforgeeks: https://www.geeksforgeeks.org/node-js/node-interview-questions-and-answers
+3. Interviewbit: https://www.interviewbit.com/node-js-interview-questions
+4. Fullstack.cafe: https://www.fullstack.cafe/blog/node-js-interview-questions
+5. Github.com/Devinterview-io: https://github.com/Devinterview-io/node-interview-questions
+6. Turing: https://www.turing.com/interview-questions/node-js
+7. Codeinterview.io: https://codeinterview.io/interview-questions/node-js-questions-answers
+8. Devinterview.io: https://devinterview.io/questions/web-and-mobile-development/node-interview-questions
+9. Zerotomastery.io :https://zerotomastery.io/blog/node-js-interview-questions/
+10. Kritimyantra: https://kritimyantra.com/blogs/top-30-nodejs-interview-questions-and-answers-in-2025-beginner-friendly-guide
