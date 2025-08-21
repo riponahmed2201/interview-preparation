@@ -13,12 +13,6 @@ By going through these questions, you can **revise key concepts**, **prepare for
 
 ---
 
-This section provides the **basic Node.js interview questions** which will primarily help freshers.
-
----
-
----
-
 ## Table of Contents
 
 1. [What is Node.js and Where can you use it?](#1-what-is-nodejs-and-where-can-you-use-it)
