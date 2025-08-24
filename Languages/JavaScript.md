@@ -1,4 +1,4 @@
-# JavaScript Interview Questions & Answers
+# 📘 JavaScript Interview Questions & Answers
 
 ## Table of Contents
 

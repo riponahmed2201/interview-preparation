@@ -1,4 +1,4 @@
-# PHP Interview Questions and Answers
+# 📘 PHP Interview Questions & Answers
 
 PHP is a popular server-side scripting language, widely known for its efficiency in web development and versatility across various platforms. PHP is extensively utilized by top companies such as Facebook, WordPress, Slack, Wikipedia, MailChimp, and many more due to its robust features and high performance.
 

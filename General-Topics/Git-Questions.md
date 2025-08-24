@@ -1,4 +1,4 @@
-Perfect! Here’s a **Table of Contents with clickable links** for the 100 Git interview questions in Markdown. I’ve structured it so you can easily jump to any section.
+Git Interview Question and Answer
 
 ---
 

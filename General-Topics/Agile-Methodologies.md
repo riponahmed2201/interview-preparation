@@ -1,6 +1,4 @@
-Absolutely! Here's a **Table of Contents** with clickable links for your Agile Methodology interview questions in Markdown format. You can copy this at the top of your document. Each link points to the corresponding question by using anchor links.
-
----
+Agile Methodology Interview Question and Answer
 
 # 📑 Table of Contents
 

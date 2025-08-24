@@ -1,10 +1,3 @@
-Got it 👍 — You want **a big collection (100–150+) of TypeScript interview questions and answers**, formatted neatly in **Markdown**.
-I’ll prepare them in **Q\&A style**, grouped into **categories (Basics, Advanced, OOP, Generics, Utility Types, Decorators, Framework-related, etc.)**, so you can use them directly for revision or documentation.
-
-Here’s a **starter batch (about 50)**. If you like this format, I can extend it until we reach **100–150+ questions**.
-
----
-
 # 📘 TypeScript Interview Questions & Answers
 
 ## 🟢 Basics

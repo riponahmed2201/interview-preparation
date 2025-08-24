@@ -1,4 +1,4 @@
-# Node.js Interview Questions and Answers
+# 📘 Node.js Interview Questions and Answers
 
 Node.js is one of the most popular JavaScript runtime environments, widely used for building fast, scalable, and real-time applications.  
 In technical interviews, candidates are often asked Node.js questions ranging from basic concepts to advanced scenarios, depending on their experience level.

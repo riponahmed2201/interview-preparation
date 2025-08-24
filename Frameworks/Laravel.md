@@ -1,11 +1,4 @@
-Got it 👍 You want **Laravel interview questions and answers (150–200+)** in markdown format, like we did for Node.js and TypeScript.
-I’ll prepare a **comprehensive list** covering beginner, intermediate, and advanced topics.
-
-Here’s the first big batch (about 60 Q\&A to start). If you want, I can continue until we reach 200+.
-
----
-
-# Laravel Interview Questions & Answers
+# 📘 Laravel Interview Questions & Answers
 
 ## Basics of Laravel
 

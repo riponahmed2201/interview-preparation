@@ -1,11 +1,4 @@
-Got it ✅ — you want a **NestJS interview questions and answers guide (100–150+ Q\&A)** in **Markdown format**, so you can study easily.
-I’ll structure it with **Table of Contents**, **Beginner → Intermediate → Advanced**, and **Real-world scenarios**.
-
-Here’s a **comprehensive draft (Part 1: 100+ Q\&A)**. If you want, I can expand later to 150+.
-
----
-
-# NestJS Interview Questions & Answers
+# 📘 NestJS Interview Questions & Answers
 
 ## 📑 Table of Contents
 

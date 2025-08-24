@@ -1,4 +1,4 @@
-# 100 React.js Interview Questions and Answers
+# 📘 React.js Interview Questions & Answers
 
 ## Table of Contents
 
